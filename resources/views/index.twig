@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/assets/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
+</head>
+<body>
+
+<div class="demo" style="background-color: white">
+    <div class="chat__person">
+        <span class="chat__online active"></span>
+        <span class="chat__name">API小秘书</span>
+    </div>
+    <div class="chat active" style="display: block">
+        <div class="chat__messages">
+        </div>
+        <input type="text" class="chat__input" placeholder="Your message"/>
+    </div>
+</div>
+
+<div id="loading-toast" style="display:none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content">数据加载中</p>
+    </div>
+</div>
+
+<script>
+
+    function server() {
+        if ($('.chat__input').val() == '') {
+            alert('请输入内容');
+            return false;
+        } else {
+            var content = $('.chat__input').val();
+        }
+
+        $('.chat__messages').append('<div class="chat__msgRow"><div class="chat__message mine">' + $('.chat__input').val() + '</div> </div>');
+        $.ajax({
+            url: "/api/chat",
+            beforeSend: function (xhr) {
+                $('#loading-toast').show();
+                xhr.overrideMimeType("application/json;charset=utf-8");
+            },
+            type: 'get',
+            data: {content: content},
+            dataType: 'json'
+        }).done(function (res) {
+            console.log(res);
+            $('#loading-toast').hide();
+            $('.chat__messages').append('<div class="chat__msgRow"><div class="chat__message notMine">' + res.data + '</div> </div>');
+            $('.chat__input').val('');
+            $('.chat__messages').scrollTop(10000000000000);
+        });
+    }
+
+    $(document).keypress(function (e) {
+        if (e.which == 13) {
+            server();
+        }
+    });
+
+    $('#submit').click(function () {
+        server();
+    });
+</script>
+</body>
+</html>

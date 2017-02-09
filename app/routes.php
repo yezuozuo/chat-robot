@@ -1,6 +1,13 @@
 <?php
 
-$app->get('/', 'HomeController:index');
+$app->get('/', function ($request, $response) {
+    return $this->view->render($response, 'index.twig');
+});
+
+$app->get('/api/chat','App\Controllers\ChatController:index');
+
+$app->get('/test/split','App\Controllers\TestController:split');
+$app->get('/test/autolink','App\Controllers\TestController:autolink');
 
 /** lab **/
 $app->get('/lab/db', 'HomeController:db');

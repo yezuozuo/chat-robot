@@ -31,6 +31,7 @@ class Tool extends Main {
 
         $before_time = self::microtime_float();
 
+        $res = '';
         try {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $url);
@@ -51,8 +52,8 @@ class Tool extends Main {
             $info = curl_getinfo($curl);
             curl_close($curl);
 
-            z_log('Common: url=%s', $url);
-            z_log('Common: data=%s', print_r($post, true));
+            z_log('Common: url=%s'. $url);
+            z_log('Common: data=%s'. print_r($post, true));
 
             if ($res === false || $info['http_code'] != 200) {
                 $err = "post token url={$url} contents=" . print_r($post, true) . ' res=' . print_r($res, true);
@@ -65,8 +66,8 @@ class Tool extends Main {
                 $res = json_decode($res, true);
             }
 
-            z_log('Common: res=%s', print_r($res, true));
-            z_log('Common: time=%s', (self::microtime_float() - $before_time));
+            z_log('Common: res=%s'. print_r($res, true));
+            z_log('Common: time=%s'. (self::microtime_float() - $before_time));
         } catch (\Exception $exc) {
             $err = "post token url={$url} contents=" . print_r($post, true) . ' res=' . print_r($res, true);
             z_log($err);
@@ -85,23 +86,23 @@ class Tool extends Main {
         return ((float) $usec + (float) $sec);
     }
 
-    public static function autolink($str='') {
+    /**
+     * @param string $str
+     * @return string
+     */
+    public static function autoLink($str='') {
 
         if($str=='' or !preg_match('/(http|www\.|@)/i', $str)) { return $str; }
 
         $lines = explode("\n", $str); $new_text = '';
         while (list($k,$l) = each($lines)) {
-            // replace links:
+            unset($k);
             $l = preg_replace("/([ \t]|^)www\./i", "\\1http://www.", $l);
             $l = preg_replace("/([ \t]|^)ftp\./i", "\\1ftp://ftp.", $l);
-
-            $l = preg_replace("/(http:\/\/[^ )!]+)/i", "<a href=\"\\1\">\\1</a>", $l);
-
-            $l = preg_replace("/(https:\/\/[^ )!]+)/i", "<a href=\"\\1\">\\1</a>", $l);
-
-            $l = preg_replace("/(ftp:\/\/[^ )!]+)/i", "<a href=\"\\1\">\\1</a>", $l);
-
-            $l = preg_replace("/([-a-z0-9_]+(\.[_a-z0-9-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)+))/i", "<a href=\"mailto:\\1\">\\1</a>", $l);
+            $l = preg_replace("/(http:\/\/[^ )!]+)/i", "<a target=\"_blank\" href=\"\\1\">\\1</a>", $l);
+            $l = preg_replace("/(https:\/\/[^ )!]+)/i", "<a target=\"_blank\" href=\"\\1\">\\1</a>", $l);
+            $l = preg_replace("/(ftp:\/\/[^ )!]+)/i", "<a target=\"_blank\" href=\"\\1\">\\1</a>", $l);
+            $l = preg_replace("/([-a-z0-9_]+(\.[_a-z0-9-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)+))/i", "<a target=\"_blank\" href=\"mailto:\\1\">\\1</a>", $l);
 
             $new_text .= $l."\n";
         }

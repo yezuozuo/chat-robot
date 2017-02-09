@@ -27,6 +27,6 @@ class TestController extends Controller {
 
     public function autolink() {
         $text = '大误 · 开工红包治疗法 http://daily.zhihu.com/story/9192382 http://pic2.zhimg.com/d26b5eb025de7ad3d17809ff5e5a0df1.jpg';
-        echo Tool::autolink($text);
+        echo Tool::autoLink($text);
     }
 }

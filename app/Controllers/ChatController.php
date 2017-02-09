@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Main;
 use App\Models\Third;
+use App\Models\Tool;
 use App\Models\Weather;
 
 /**
@@ -13,8 +14,10 @@ use App\Models\Weather;
  */
 class ChatController extends Controller {
 
+    /**
+     * index
+     */
     public function index() {
-        //echo json_encode(['data' => 123]);
         $content = $_REQUEST['content'];
         switch ($content) {
             case '帮助':
@@ -31,9 +34,6 @@ class ChatController extends Controller {
                 break;
             case 'wiki':
                 $answer = Third::wiki('天安门');
-                break;
-            case 'google':
-                $answer = Third::google('天安门');
                 break;
             case 'zhihu':
                 $answer = Third::zhihu('123');
@@ -64,9 +64,15 @@ class ChatController extends Controller {
                 break;
         }
         z_log($_REQUEST['content']);
-        echo json_encode(['data' => $answer]);
+        echo json_encode(['data' => Tool::autoLink($answer)]);
     }
 
+    /**
+     * 图灵机器人
+     *
+     * @param $content
+     * @return string
+     */
     private function talk($content) {
         $key = '2085ad3cb7af434a8091153da3b44fbe';
         $re  = json_decode(file_get_contents('http://www.tuling123.com/openapi/api?key=' . $key . '&info=' . $content), true);
